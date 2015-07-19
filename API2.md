@@ -1000,3 +1000,39 @@ Status `404 Not Found`
  "error": "no city found"
 }
 ```
+
+
+## Version
+
+### Show version
+
+Get server version
+
+    GET /version
+
+
+#### Parameters
+
+*none*
+
+
+#### Example
+
+    GET /version
+
+
+#### Response
+
+Status `200 OK`
+
+```
+{
+ "version": "0.1.2",
+ "builddate": "2014-12-23T17:36:12.321Z",
+ "git_branch": "master"
+}
+```
+
+or in case of failure
+
+Status `404 Not Found`
