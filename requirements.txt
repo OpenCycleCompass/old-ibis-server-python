@@ -1,0 +1,6 @@
+# PyLint source code analyzer
+pylint
+
+# Falcon REST Framework
+cython
+falcon
