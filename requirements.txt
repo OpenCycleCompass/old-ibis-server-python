@@ -4,3 +4,6 @@ pylint
 # Falcon REST Framework
 cython
 falcon
+
+# SQLAlchemy Python SQL Toolkit
+SQLAlchemy
