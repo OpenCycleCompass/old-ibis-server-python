@@ -7,3 +7,9 @@ falcon
 
 # SQLAlchemy Python SQL Toolkit
 SQLAlchemy
+
+# JSON
+simplejson
+
+# Development Web Server
+wsgiref
