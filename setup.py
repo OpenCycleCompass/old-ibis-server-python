@@ -9,7 +9,7 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='ibis-api2',
+    name='ibisapi2',
     version='1.99.0',
     description='iBis Api 2',
     long_description=readme,
