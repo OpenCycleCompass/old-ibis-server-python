@@ -1,3 +1,4 @@
+
 # PyLint source code analyzer
 pylint
 
@@ -13,3 +14,6 @@ simplejson
 
 # Development Web Server
 wsgiref
+
+# Request package (download osm data via http)
+requests
