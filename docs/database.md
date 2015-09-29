@@ -5,9 +5,19 @@
 ### TODO
 
 * add description to each table
-* Precision of timestamps (64bit? / seconds or milliseconds) 
-* highlight indices **bold**
-* character vs. varcharacter
+* ~~Precision of timestamps (64bit? / seconds or milliseconds)~~
+* ~~highlight indices **bold**~~
+* ~~character vs. varcharacter~~
+
+
+### Considerations
+
+* Do not use *tokens*, instead let the user store his recorded *track ids*.
+This is better data protection and tokens are not going to get used for special functions in future.
+* Use *TEXT* for all columns containing strings.
+See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs-text/) for more information.
+* time/timestamp is stored in PostgreSQL *timestamp* columns. 
+*timestamp* columns provide 1 microsecond resolution, use 8 Byte and high value is 294276 AD.
 
 
 #### *tracks*
@@ -112,7 +122,6 @@
 #### *cost_dynamic_precalculated*
 
 In table *cost_dynamic* for every way segment may exist more than 1 rows, so average of cost columns must be calculated.
-
 In table *cost_dynamic_precalculated* the average cost values will be frequently calculated for each segment.
 
 | Name  | Type | Description | foreign key |
