@@ -1,14 +1,6 @@
 # Database Structure
 
-## Tables
-
-### TODO
-
-* ~~add description to each table~~
-* numeric data type precision
-
-
-### Considerations
+## Considerations
 
 * Do not use *tokens*, instead let the user store his recorded *track ids*.
 This is better data protection and tokens are not going to get used for special functions in future.
@@ -16,7 +8,13 @@ This is better data protection and tokens are not going to get used for special 
 See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs-text/) for more information.
 * time/timestamp is stored in PostgreSQL *timestamp* columns. 
 *timestamp* columns provide 1 microsecond resolution, use 8 Byte and high value is 294276 AD.
+* numeric data type precision: 
+    * *numeric(11,8)* for distances < 100m
+    * *numeric(16,8)* for bigger distances
+    * cost values are *numeric(16,8)*
 
+
+## Tables
 
 #### *tracks*
 
@@ -27,7 +25,7 @@ Contains track metadata, hash of track points (*data_hash*) and bounding box
 | **id** | bigserial | public track id | |
 | created | timestamp | creation timestamp (send by device) | |
 | uploaded | timestamp | upload timestamp (server-side evaluated) | |
-| length | numeric(?) | length (in meter) fo track | |
+| length | numeric(16,8) | length (in meter) fo track | |
 | duration| bigint | duration (in milliseconds) of track | |
 | num_points | bigint | number of points (coordinates) of track | |
 | public | boolean | true if track is public visible | |
@@ -47,11 +45,11 @@ This table contains the track points, ordered by track id from *tracks* table.
 | iid | bigserial | table internal id | |
 | **id** | bigserial | track id | [tracks](#tracks) -> id |
 | **geom** | geometry(POINT,4326) | coordinates of track point | |
-| altitude | numeric(?) | optional altitude of track point | |
-| accuracy | numeric(?) | optional accuracy of gps fix (in meter) | |
+| altitude | numeric(16,8) | optional altitude of track point | |
+| accuracy | numeric(11,8) | optional accuracy of gps fix (in meter) | |
 | time | timestamp | timestamp of track point | |
-| velocity | numeric(?) | optional velocity at tracl point | |
-| shock | numeric(?) | optional *shock* value to quantify street quality | |
+| velocity | numeric(11,8) | optional velocity at tracl point | |
+| shock | numeric(16,8) | optional *shock* value to quantify street quality | |
 
 
 #### *users*
@@ -98,8 +96,8 @@ For every way type from OSM and every routing profile a reverse and forward cost
 |-------|------|-------------|-------------|
 | iid | bigserial | table internal id | |
 | **id** | bigint | *OSM* way type id (external) | ? |
-| cost_forward | numeric(?) | forward cost for way type | |
-| cost_reverse | numeric(?) | reverse cost for way type | |
+| cost_forward | numeric(16,8) | forward cost for way type | |
+| cost_reverse | numeric(16,8) | reverse cost for way type | |
 | **profile** | bigserial | routing profile | [profiles](#profiles) -> id |
 
 
@@ -125,8 +123,8 @@ For each way segment in the local *pgRouting* database a reverse and forward cos
 | iid | bigserial | table internal id | |
 | **segment_id** | bigint | *pgRouting* segment id (external) | |
 | track_id | bigserial | source of calculated dynamic cost | [tracks](#tracks) -> id |
-| cost_forward | numeric(?) | forward cost for way segment | |
-| cost_reverse | numeric(?) | reverse cost for way segment | |
+| cost_forward | numeric(16,8) | forward cost for way segment | |
+| cost_reverse | numeric(16,8) | reverse cost for way segment | |
 
 
 #### *cost_dynamic_precalculated*
@@ -138,6 +136,6 @@ In table *cost_dynamic_precalculated* the average cost values will be frequently
 |-------|------|-------------|-------------|
 | iid | bigserial | table internal id | |
 | **segment_id** | bigint | *pgRouting* segment id (external) | |
-| cost_forward | numeric(?) | forward cost for way segment | |
-| cost_reverse | numeric(?) | reverse cost for way segment | |
+| cost_forward | numeric(16,8) | forward cost for way segment | |
+| cost_reverse | numeric(16,8) | reverse cost for way segment | |
 
