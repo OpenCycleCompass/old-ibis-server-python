@@ -6,8 +6,8 @@
 
 * add description to each table
 * ~~Precision of timestamps (64bit? / seconds or milliseconds)~~
-* ~~highlight indices **bold**~~
 * ~~character vs. varcharacter~~
+* numeric data type precision
 
 
 ### Considerations
@@ -24,7 +24,7 @@ See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
-| id | bigserial | public track id | |
+| **id** | bigserial | public track id | |
 | created | timestamp | creation timestamp (send by device) | |
 | uploaded | timestamp | upload timestamp (server-side evaluated) | |
 | length | numeric(?) | length (in meter) fo track | |
@@ -42,8 +42,8 @@ See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
 | iid | bigserial | table internal id | |
-| id | bigserial | track id | [tracks](#tracks) -> id |
-| geom| geometry(POINT,4326) | coordinates of track point | |
+| **id** | bigserial | track id | [tracks](#tracks) -> id |
+| **geom** | geometry(POINT,4326) | coordinates of track point | |
 | altitude | numeric(?) | optional altitude of track point | |
 | accuracy | numeric(?) | optional accuracy of gps fix (in meter) | |
 | time | timestamp | timestamp of track point | |
@@ -74,7 +74,7 @@ See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
 | iid | bigserial | table internal id | |
-| id | bigserial | routing profile id | [profiles](#profiles) -> id |
+| **id** | bigserial | routing profile id | [profiles](#profiles) -> id |
 | language | character(5) | profile description language | |
 | description | text | profile description | |
 
