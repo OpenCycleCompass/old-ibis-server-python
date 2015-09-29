@@ -4,9 +4,7 @@
 
 ### TODO
 
-* add description to each table
-* ~~Precision of timestamps (64bit? / seconds or milliseconds)~~
-* ~~character vs. varcharacter~~
+* ~~add description to each table~~
 * numeric data type precision
 
 
@@ -33,10 +31,10 @@ Contains track metadata, hash of track points (*data_hash*) and bounding box
 | duration| bigint | duration (in milliseconds) of track | |
 | num_points | bigint | number of points (coordinates) of track | |
 | public | boolean | true if track is public visible | |
-| name | character(30) | track name | |
+| name | text | track name | |
 | comment | text | user's comment on track | |
-| city | character(30) | city where track starts (or ends?) | |
-| data_hash |character(64) | sha256 hash of track points (to remove duplicates) | |
+| city | text | city where track starts (or ends?) | |
+| data_hash |text | sha256 hash of track points (to remove duplicates) | |
 | **bounding_box** | box2d | geometry box bounding track | |
 
 
@@ -63,8 +61,8 @@ User table with user *name* (table index), sha256 hashed password, rights and en
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
 | iid | bigserial | table internal id | |
-| **name** | character(30) | unique user name | |
-| password | character(64?) | hash (sha256?) of user password | |
+| **name** | text | unique user name | |
+| password | text | hash (sha256?) of user password | |
 | rights | bigint | user rights (0 is super user) | |
 | enabled | boolean | true if user is enabled | |
 
@@ -76,7 +74,7 @@ This table contains one entry per Routing profile with an unique *id* and a name
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
 | **id** | bigserial | routing profile (unique) id | |
-| name | character(30) | name of routing profile | |
+| name | text | name of routing profile | |
 
 
 #### *profile_description*
@@ -87,7 +85,7 @@ Contains description(s in different languages) for every routing profile from *p
 |-------|------|-------------|-------------|
 | iid | bigserial | table internal id | |
 | **id** | bigserial | routing profile id | [profiles](#profiles) -> id |
-| language | character(5) | profile description language | |
+| language | text | profile description language | |
 | description | text | profile description | |
 
 
@@ -112,9 +110,9 @@ Extended internationalized desciption for every OSM way type.
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
 | **cost_static** | bigint | static cost way type id | [cost_static](#cost_static) -> id |
-| name | character(30) | name of way type | |
+| name | text | name of way type | |
 | description | text | description of way type | |
-| language | character(5) | language of way name and description | |
+| language | text | language of way name and description | |
 
 
 #### *cost_dynamic*
