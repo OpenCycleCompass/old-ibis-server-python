@@ -25,7 +25,6 @@ See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
 | id | bigserial | public track id | |
-| token | uuid | token from user who uploaded this track | [tokens](#tokens) -> token |
 | created | timestamp | creation timestamp (send by device) | |
 | uploaded | timestamp | upload timestamp (server-side evaluated) | |
 | length | numeric(?) | length (in meter) fo track | |
@@ -98,14 +97,6 @@ See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs
 | name | character(30) | name of way type | |
 | description | text | description of way type | |
 | language | character(5) | language of way name and description | |
-
-#### *tokens*
-
-| Name  | Type | Description | foreign key |
-|-------|------|-------------|-------------|
-| iid | bigserial | table internal id | |
-| token | uuid | unique token | |
-| created | timestamp | token creation timestamp | |
 
 
 #### *cost_dynamic*
