@@ -22,6 +22,8 @@ See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs
 
 #### *tracks*
 
+Contains track metadata, hash of track points (*data_hash*) and bounding box
+
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
 | **id** | bigserial | public track id | |
@@ -35,9 +37,12 @@ See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs
 | comment | text | user's comment on track | |
 | city | character(30) | city where track starts (or ends?) | |
 | data_hash |character(64) | sha256 hash of track points (to remove duplicates) | |
+| **bounding_box** | box2d | geometry box bounding track | |
 
 
 #### *track_points*
+
+This table contains the track points, ordered by track id from *tracks* table.
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
@@ -53,15 +58,20 @@ See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs
 
 #### *users*
 
+User table with user *name* (table index), sha256 hashed password, rights and enabled flag.
+
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
 | iid | bigserial | table internal id | |
 | **name** | character(30) | unique user name | |
 | password | character(64?) | hash (sha256?) of user password | |
 | rights | bigint | user rights (0 is super user) | |
+| enabled | boolean | true if user is enabled | |
 
 
 #### *profiles*
+
+This table contains one entry per Routing profile with an unique *id* and a name.
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
@@ -70,6 +80,8 @@ See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs
 
 
 #### *profile_description*
+
+Contains description(s in different languages) for every routing profile from *profiles* table.
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
@@ -81,15 +93,21 @@ See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs
 
 #### *cost_static*
 
+Static cost value are stored in this table.
+For every way type from OSM and every routing profile a reverse and forward cost value is stored.
+
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
 | iid | bigserial | table internal id | |
-| **id** | bigint | *pgRouting* way type id (external) | ? |
-| cost | numeric(?) | cost for way type | |
-| profile | bigserial | routing profile | [profiles](#profiles) -> id |
+| **id** | bigint | *OSM* way type id (external) | ? |
+| cost_forward | numeric(?) | forward cost for way type | |
+| cost_reverse | numeric(?) | reverse cost for way type | |
+| **profile** | bigserial | routing profile | [profiles](#profiles) -> id |
 
 
 #### *cost_static_description*
+
+Extended internationalized desciption for every OSM way type.
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
@@ -100,6 +118,9 @@ See [this link](http://www.depesz.com/2010/03/02/charx-vs-varcharx-vs-varchar-vs
 
 
 #### *cost_dynamic*
+
+Dynamic cost value are stored in this table.
+For each way segment in the local *pgRouting* database a reverse and forward cost value is stored.
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
