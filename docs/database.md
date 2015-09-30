@@ -22,7 +22,7 @@ Contains track metadata, hash of track points (*data_hash*) and bounding box
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
-| **id** | bigserial | public track id | |
+| **id** | bigserial UNIQUE | public track id | |
 | created | timestamp | creation timestamp (send by device) | |
 | uploaded | timestamp | upload timestamp (server-side evaluated) | |
 | length | numeric(16,8) | length (in meter) fo track | |
@@ -42,8 +42,7 @@ This table contains the track points, ordered by track id from *tracks* table.
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
-| iid | bigserial | table internal id | |
-| **id** | bigserial | track id | [tracks](#tracks) -> id |
+| **id** | (bigserial) | track id | [tracks](#tracks) -> id |
 | **geom** | geometry(POINT,4326) | coordinates of track point | |
 | altitude | numeric(16,8) | optional altitude of track point | |
 | accuracy | numeric(11,8) | optional accuracy of gps fix (in meter) | |
@@ -58,8 +57,7 @@ User table with user *name* (table index), sha256 hashed password, rights and en
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
-| iid | bigserial | table internal id | |
-| **name** | text | unique user name | |
+| **name** | text UNIQUE | unique user name | |
 | password | text | hash (sha256?) of user password | |
 | rights | bigint | user rights (0 is super user) | |
 | enabled | boolean | true if user is enabled | |
@@ -71,7 +69,7 @@ This table contains one entry per Routing profile with an unique *id* and a name
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
-| **id** | bigserial | routing profile (unique) id | |
+| **id** | bigserial UNIQUE | routing profile (unique) id | |
 | name | text | name of routing profile | |
 
 
@@ -81,8 +79,7 @@ Contains description(s in different languages) for every routing profile from *p
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
-| iid | bigserial | table internal id | |
-| **id** | bigserial | routing profile id | [profiles](#profiles) -> id |
+| **id** | (bigserial) | routing profile id | [profiles](#profiles) -> id |
 | language | text | profile description language | |
 | description | text | profile description | |
 
@@ -94,11 +91,10 @@ For every way type from OSM and every routing profile a reverse and forward cost
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
-| iid | bigserial | table internal id | |
 | **id** | bigint | *OSM* way type id (external) | ? |
 | cost_forward | numeric(16,8) | forward cost for way type | |
 | cost_reverse | numeric(16,8) | reverse cost for way type | |
-| **profile** | bigserial | routing profile | [profiles](#profiles) -> id |
+| **profile** | (bigserial) | routing profile | [profiles](#profiles) -> id |
 
 
 #### *cost_static_description*
@@ -107,7 +103,7 @@ Extended internationalized desciption for every OSM way type.
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
-| **cost_static** | bigint | static cost way type id | [cost_static](#cost_static) -> id |
+| **cost_static** | (bigint) | static cost way type id | [cost_static](#cost_static) -> id |
 | name | text | name of way type | |
 | description | text | description of way type | |
 | language | text | language of way name and description | |
@@ -120,9 +116,8 @@ For each way segment in the local *pgRouting* database a reverse and forward cos
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
-| iid | bigserial | table internal id | |
 | **segment_id** | bigint | *pgRouting* segment id (external) | |
-| track_id | bigserial | source of calculated dynamic cost | [tracks](#tracks) -> id |
+| track_id | (bigserial) | source of calculated dynamic cost | [tracks](#tracks) -> id |
 | cost_forward | numeric(16,8) | forward cost for way segment | |
 | cost_reverse | numeric(16,8) | reverse cost for way segment | |
 
@@ -134,8 +129,7 @@ In table *cost_dynamic_precalculated* the average cost values will be frequently
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
-| iid | bigserial | table internal id | |
-| **segment_id** | bigint | *pgRouting* segment id (external) | |
+| **segment_id** | bigint UNIQUE | *pgRouting* segment id (external) | |
 | cost_forward | numeric(16,8) | forward cost for way segment | |
 | cost_reverse | numeric(16,8) | reverse cost for way segment | |
 
