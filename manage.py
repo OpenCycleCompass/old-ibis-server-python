@@ -6,7 +6,8 @@ import os.path
 import sys
 import bz2
 import requests
-import sqlalchemy
+
+import database.helper
 
 
 def download_file(url, local_path):
@@ -48,10 +49,15 @@ def main():
     parser.add_argument("--osm2pgr_conf", required=False, help="path to osm2pgrouting mapconfig.xml file",
                         default="/usr/share/osm2pgrouting/mapconfig.xml")
 
-    parser.add_argument("-v", "--verbose", action="count", default=0, help="increase output verbosity")
+    parser.add_argument("-v", "--verbose", required=False, action="count", default=0, help="increase output verbosity")
 
-    parser.add_argument("-k", "--keep_download", action='store_true', default=False, required=False,
+    parser.add_argument("-k", "--keep_download", required=False, action='store_true', default=False,
                         help="do not delete downloaded files after data import")
+
+    arg_grp_import_data = parser.add_mutually_exclusive_group(required=True)
+    arg_grp_import_data.add_argument("--data_file", help="iBis data (zipped sql dump)", type=str)
+    arg_grp_import_data.add_argument("--no_data_import", action='store_true', default=False,
+                                     help="do not import data from backup (just create empty tables)")
 
     args = parser.parse_args()
 
@@ -81,13 +87,29 @@ def main():
     # uncompress bz2 file
     osm_file = uncompress_bz2(bz2_file)
 
-    # Open database connection
-    db_url = ['postgresql', '://', args.db_user, ':', args.db_password, '@', args.db_host, ':', str(args.db_port), '/',
-              args.db_name]
-    if args.verbose > 2:
-        print 'PgSQL database url:', ''.join(db_url)
-    engine = sqlalchemy.create_engine(''.join(db_url))
+    # check for ibis data file
+    if not args.no_data_import:
+        if not os.path.isfile(args.data_file):
+            print "iBis data file (--data_file", args.data_file, ") does not exist."
+            sys.exit(1)
+        else:
+            data_file = args.data_file
+    else:
+        data_file = None
 
+    # Open database connection
+    engine = database.helper.create_engine(args.db_user, args.db_password, args.db_name, host=args.db_host,
+                                           port=args.db_port)
+
+    # create PostGIS and pgRouting extensions in database:
+    # TODO
+    # CREATE EXTENSION postgis; CREATE EXTENSION pgrouting;
+
+    # create iBis database tables
+    metadata = database.helper.create_tables()
+    metadata.create_all(engine)
+
+    # import osm data
     print 'Importing OSM data ...'
     if subprocess.call([args.osm2pgr_bin,
                         '--conf', args.osm2pgr_conf,
@@ -103,6 +125,27 @@ def main():
         print '... Error.'
         sys.exit(1)
 
+    # optional import data from backup
+    # [work in progress] TODO
+    if data_file:
+        print 'Creating iBis tables (import data from backup) ...'
+        my_env = os.environ
+        my_env['PGPASSWORD'] = args.db_password
+
+        if subprocess.call(['psql',
+                            '-h', args.db_host,
+                            '-p', str(args.db_port),
+                            '-U', args.db_user,
+                            '-d', args.db_name,
+                            '--file', data_file],
+                           env=my_env) == 0:
+            print '... Success!'
+        else:
+            print '... Error.'
+            sys.exit(1)
+    else:
+        print 'iBis data import skipped.'
+
     # clean up downloaded file
     if not args.keep_download and args.osm_url is not None:
         print 'Removing OSM data file ...'
@@ -113,9 +156,6 @@ def main():
             print '... error.'
             pass
 
-    print 'Creating iBis tables ...'
-    # TODO
-    print '... Success!'
 
 
 if __name__ == '__main__':
