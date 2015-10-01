@@ -9,6 +9,9 @@ falcon
 # SQLAlchemy Python SQL Toolkit
 SQLAlchemy
 
+# GEOAlchemy 2: Geo SQLAlchemy extension
+GeoAlchemy2
+
 # JSON
 simplejson
 
