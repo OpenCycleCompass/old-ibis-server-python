@@ -33,7 +33,8 @@ Contains track metadata, hash of track points (*data_hash*) and bounding box
 | comment | text | user's comment on track | |
 | city | text | city where track starts (or ends?) | |
 | data_hash |text | sha256 hash of track points (to remove duplicates) | |
-| **bounding_box** | box2d | geometry box bounding track | |
+| **extension_geom** | Geometry(Polygon) | geometry box bounding track | |
+| track_geom | Geometry(Linestring) | track geometry as PostGIS Linestring | |
 
 
 #### *track_points*
@@ -96,6 +97,10 @@ For every way type from OSM and every routing profile a reverse and forward cost
 | cost_reverse | numeric(16,8) | reverse cost for way type | |
 | **profile** | (bigserial) | routing profile | [profiles](#profiles) -> id |
 
+##### Constraints
+
+* (*id*, *profile*) tupel is unique.
+
 
 #### *cost_static_description*
 
@@ -103,7 +108,8 @@ Extended internationalized desciption for every OSM way type.
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
-| **cost_static** | (bigint) | static cost way type id | [cost_static](#cost_static) -> id |
+| ~~**cost_static_id**~~ | ~~(bigint)~~ | ~~static cost way type id~~ | ~~[cost_static](#cost_static) -> id~~ |
+| **cost_static_id** | bigint | static cost way type id | foreign key not possible, **cost_static.id** is not unique |
 | name | text | name of way type | |
 | description | text | description of way type | |
 | language | text | language of way name and description | |
