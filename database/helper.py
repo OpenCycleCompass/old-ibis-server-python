@@ -30,7 +30,7 @@ def create_tables():
     """
     metadata = sqlalchemy.MetaData()
     sqlalchemy.Table('tracks', metadata,
-                     sqlalchemy.Column('id', sqlalchemy.BigInteger, primary_key=True),
+                     sqlalchemy.Column('id', sqlalchemy.BigInteger, primary_key=True, index=True),
                      sqlalchemy.Column('created', sqlalchemy.TIMESTAMP, nullable=False),
                      sqlalchemy.Column('uploaded', sqlalchemy.TIMESTAMP, nullable=False),
                      sqlalchemy.Column('length', sqlalchemy.Numeric(16, 8), nullable=False),
@@ -41,13 +41,13 @@ def create_tables():
                      sqlalchemy.Column('comment', sqlalchemy.Text),
                      sqlalchemy.Column('city', sqlalchemy.Text),
                      sqlalchemy.Column('data_hash', sqlalchemy.Text, unique=True),
-                     sqlalchemy.Column('extension_geom', geoalchemy2.Geometry('POLYGON')),  # index?
+                     sqlalchemy.Column('extension_geom', geoalchemy2.Geometry('POLYGON'), index=True),  # geo index?
                      sqlalchemy.Column('track', geoalchemy2.Geometry('LINESTRING'))
                      )
     sqlalchemy.Table('track_points', metadata,
                      sqlalchemy.Column('id', None, sqlalchemy.ForeignKey('tracks.id', ondelete='CASCADE'),
-                                       nullable=False),  # index?
-                     sqlalchemy.Column('geom', geoalchemy2.Geometry('POINT', 4326), nullable=False),  # index?
+                                       nullable=False, index=True),
+                     sqlalchemy.Column('geom', geoalchemy2.Geometry('POINT', 4326), nullable=False, index=True),
                      sqlalchemy.Column('altitude', sqlalchemy.Numeric(16, 8)),
                      sqlalchemy.Column('accuracy', sqlalchemy.Numeric(11, 8)),
                      sqlalchemy.Column('time', sqlalchemy.TIMESTAMP, nullable=False),
@@ -55,13 +55,13 @@ def create_tables():
                      sqlalchemy.Column('shock', sqlalchemy.Numeric(16, 8))
                      )
     sqlalchemy.Table('users', metadata,
-                     sqlalchemy.Column('name', sqlalchemy.Text, unique=True),  # index?
+                     sqlalchemy.Column('name', sqlalchemy.Text, unique=True, index=True),
                      sqlalchemy.Column('password', sqlalchemy.Text),
                      sqlalchemy.Column('rights', sqlalchemy.BigInteger),
                      sqlalchemy.Column('enabled', sqlalchemy.Boolean)
                      )
     sqlalchemy.Table('profiles', metadata,
-                     sqlalchemy.Column('id', sqlalchemy.BigInteger, primary_key=True),  # index?
+                     sqlalchemy.Column('id', sqlalchemy.BigInteger, primary_key=True, index=True),
                      sqlalchemy.Column('name', sqlalchemy.Text)
                      )
     sqlalchemy.Table('profile_description', metadata,
@@ -70,27 +70,27 @@ def create_tables():
                      sqlalchemy.Column('description', sqlalchemy.Text)
                      )
     sqlalchemy.Table('cost_static', metadata,
-                     sqlalchemy.Column('id', sqlalchemy.BigInteger),  # index?
+                     sqlalchemy.Column('id', sqlalchemy.BigInteger, index=True),
                      sqlalchemy.Column('cost_forward', sqlalchemy.Numeric(16, 8)),
                      sqlalchemy.Column('cost_reverse', sqlalchemy.Numeric(16, 8)),
-                     sqlalchemy.Column('profile', None, sqlalchemy.ForeignKey('profiles.id')),  # index?
+                     sqlalchemy.Column('profile', None, sqlalchemy.ForeignKey('profiles.id'), index=True),
                      sqlalchemy.UniqueConstraint('id', 'profile')
                      )
     sqlalchemy.Table('cost_static_description', metadata,
-                     # sqlalchemy.Column('cost_static_id', None, sqlalchemy.ForeignKey('cost_static.id')),  # index?
-                     sqlalchemy.Column('cost_static_id', sqlalchemy.BigInteger),  # foreign key?
+                     sqlalchemy.Column('cost_static_id', sqlalchemy.BigInteger, index=True),  # foreign key not possible,
+                     # cost_static.id is not unique
                      sqlalchemy.Column('name', sqlalchemy.Text),
                      sqlalchemy.Column('description', sqlalchemy.Text),
                      sqlalchemy.Column('language', sqlalchemy.Text)
                      )
     sqlalchemy.Table('cost_dynamic', metadata,
-                     sqlalchemy.Column('segment_id', sqlalchemy.BigInteger),  # index?
+                     sqlalchemy.Column('segment_id', sqlalchemy.BigInteger, index=True),
                      sqlalchemy.Column('track_id', None, sqlalchemy.ForeignKey('tracks.id')),
                      sqlalchemy.Column('cost_forward', sqlalchemy.Numeric(16, 8)),
                      sqlalchemy.Column('cost_reverse', sqlalchemy.Numeric(16, 8))
                      )
     sqlalchemy.Table('cost_dynamic_precalculated', metadata,
-                     sqlalchemy.Column('segment_id', sqlalchemy.BigInteger, unique=True),  # index?
+                     sqlalchemy.Column('segment_id', sqlalchemy.BigInteger, unique=True, index=True),
                      sqlalchemy.Column('cost_forward', sqlalchemy.Numeric(16, 8)),
                      sqlalchemy.Column('cost_reverse', sqlalchemy.Numeric(16, 8))
                      )
