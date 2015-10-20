@@ -5,7 +5,6 @@ import ibisapi2.resources as resources
 import ibisapi2.middleware as middleware
 
 
-
 api = falcon.API(
     media_type='application/json; charset=utf-8',
     middleware=[middleware.JSONTranslator()]
