@@ -85,6 +85,26 @@ Contains description(s in different languages) for every routing profile from *p
 | description | text | profile description | |
 
 
+#### *way_types*
+
+Contains *OSM* way types.
+
+| Name  | Type | Description | foreign key |
+|-------|------|-------------|-------------|
+| **id** | text | *OSM* way type id | |
+
+
+#### *way_types_description*
+
+Extended internationalized description for every OSM way type.
+
+| Name  | Type | Description | foreign key |
+|-------|------|-------------|-------------|
+| **id** | text | static cost way type id | [way_types](#way_types) -> id |
+| description | text | description of way type | |
+| language | text | language of way name and description | |
+
+
 #### *cost_static*
 
 Static cost value are stored in this table.
@@ -92,27 +112,14 @@ For every way type from OSM and every routing profile a reverse and forward cost
 
 | Name  | Type | Description | foreign key |
 |-------|------|-------------|-------------|
-| **id** | bigint | *OSM* way type id (external) | ? |
+| **id** | text | *OSM* way type id | [way_types](#way_types) -> id |
 | cost_forward | numeric(16,8) | forward cost for way type | |
 | cost_reverse | numeric(16,8) | reverse cost for way type | |
 | **profile** | (bigserial) | routing profile | [profiles](#profiles) -> id |
 
 ##### Constraints
 
-* (*id*, *profile*) tupel is unique.
-
-
-#### *cost_static_description*
-
-Extended internationalized desciption for every OSM way type.
-
-| Name  | Type | Description | foreign key |
-|-------|------|-------------|-------------|
-| ~~**cost_static_id**~~ | ~~(bigint)~~ | ~~static cost way type id~~ | ~~[cost_static](#cost_static) -> id~~ |
-| **cost_static_id** | bigint | static cost way type id | foreign key not possible, **cost_static.id** is not unique |
-| name | text | name of way type | |
-| description | text | description of way type | |
-| language | text | language of way name and description | |
+* ( *id*, *profile* ) tupel is unique and indexed.
 
 
 #### *cost_dynamic*

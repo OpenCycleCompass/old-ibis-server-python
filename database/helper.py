@@ -69,19 +69,22 @@ def create_tables():
                      sqlalchemy.Column('language', sqlalchemy.Text),
                      sqlalchemy.Column('description', sqlalchemy.Text)
                      )
+    sqlalchemy.Table('way_types', metadata,
+                     sqlalchemy.Column('id', sqlalchemy.Text, primary_key=True, index=True)
+                     )
+    sqlalchemy.Table('way_type_description', metadata,
+                     sqlalchemy.Column('id', None, sqlalchemy.ForeignKey('way_types.id')),  # not unique, index?
+                     sqlalchemy.Column('language', sqlalchemy.Text),
+                     sqlalchemy.Column('description', sqlalchemy.Text)
+                     )
     sqlalchemy.Table('cost_static', metadata,
-                     sqlalchemy.Column('id', sqlalchemy.BigInteger, index=True),
+                     sqlalchemy.Column('id', None, sqlalchemy.ForeignKey('way_types.id')),
                      sqlalchemy.Column('cost_forward', sqlalchemy.Numeric(16, 8)),
                      sqlalchemy.Column('cost_reverse', sqlalchemy.Numeric(16, 8)),
-                     sqlalchemy.Column('profile', None, sqlalchemy.ForeignKey('profiles.id'), index=True),
-                     sqlalchemy.UniqueConstraint('id', 'profile')
-                     )
-    sqlalchemy.Table('cost_static_description', metadata,
-                     sqlalchemy.Column('cost_static_id', sqlalchemy.BigInteger, index=True),  # foreign key not possible,
-                     # cost_static.id is not unique
-                     sqlalchemy.Column('name', sqlalchemy.Text),
-                     sqlalchemy.Column('description', sqlalchemy.Text),
-                     sqlalchemy.Column('language', sqlalchemy.Text)
+                     sqlalchemy.Column('profile', None, sqlalchemy.ForeignKey('profiles.id')),
+                     sqlalchemy.UniqueConstraint('id', 'profile'),
+                     # place a unique index on id, profile
+                     sqlalchemy.Index('idx_id_profile', 'id', 'profile', unique=True)
                      )
     sqlalchemy.Table('cost_dynamic', metadata,
                      sqlalchemy.Column('segment_id', sqlalchemy.BigInteger, index=True),
@@ -90,7 +93,7 @@ def create_tables():
                      sqlalchemy.Column('cost_reverse', sqlalchemy.Numeric(16, 8))
                      )
     sqlalchemy.Table('cost_dynamic_precalculated', metadata,
-                     sqlalchemy.Column('segment_id', sqlalchemy.BigInteger, unique=True, index=True),
+                     sqlalchemy.Column('segment_id', sqlalchemy.BigInteger, primary_key=True, unique=True, index=True),
                      sqlalchemy.Column('cost_forward', sqlalchemy.Numeric(16, 8)),
                      sqlalchemy.Column('cost_reverse', sqlalchemy.Numeric(16, 8))
                      )
