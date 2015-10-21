@@ -102,12 +102,13 @@ def main():
                                            port=args.db_port)
 
     # create PostGIS and pgRouting extensions in database:
-    # TODO
-    # CREATE EXTENSION postgis; CREATE EXTENSION pgrouting;
-
-    # create iBis database tables
-    metadata = database.helper.create_tables()
-    metadata.create_all(engine)
+    print "Creating PostGIS and pgRouting extension in PostgreSQL database"
+    result = engine.execute("CREATE EXTENSION postgis;")
+    for row in result:
+        print row[0]
+    result = engine.execute("CREATE EXTENSION pgrouting;")
+    for row in result:
+        print row[0]
 
     # import osm data
     print 'Importing OSM data ...'
@@ -124,6 +125,13 @@ def main():
     else:
         print '... Error.'
         sys.exit(1)
+
+    # create iBis database tables
+    metadata = database.helper.create_tables()
+    metadata.create_all(engine)
+
+    # copy osm way types from osm2pgrouting table to ibis table
+    # TODO
 
     # optional import data from backup
     # [work in progress] TODO
@@ -155,7 +163,6 @@ def main():
         except OSError:
             print '... error.'
             pass
-
 
 
 if __name__ == '__main__':
