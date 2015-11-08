@@ -95,6 +95,7 @@ def create_tables():
     sqlalchemy.Table('cost_dynamic_precalculated', metadata,
                      sqlalchemy.Column('segment_id', sqlalchemy.BigInteger, primary_key=True, unique=True, index=True),
                      sqlalchemy.Column('cost_forward', sqlalchemy.Numeric(16, 8)),
-                     sqlalchemy.Column('cost_reverse', sqlalchemy.Numeric(16, 8))
+                     sqlalchemy.Column('cost_reverse', sqlalchemy.Numeric(16, 8)),
+                     sqlalchemy.Column('relevance', sqlalchemy.Numeric(16, 8))
                      )
     return metadata

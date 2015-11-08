@@ -145,4 +145,5 @@ In table *cost_dynamic_precalculated* the average cost values will be frequently
 | **segment_id** | bigint UNIQUE | *pgRouting* segment id (external) | |
 | cost_forward | numeric(16,8) | forward cost for way segment | |
 | cost_reverse | numeric(16,8) | reverse cost for way segment | |
+| relevance | numeric(16,8) | relevance of dynamic cost value depending on number of segments | |
 
