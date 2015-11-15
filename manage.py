@@ -5,9 +5,10 @@ import subprocess
 import os.path
 import sys
 import bz2
+
 import requests
 
-import database.helper
+import ibisapi2.database.helper
 
 
 def download_file(url, local_path):
@@ -98,17 +99,14 @@ def main():
         data_file = None
 
     # Open database connection
-    engine = database.helper.create_engine(args.db_user, args.db_password, args.db_name, host=args.db_host,
+    engine = ibisapi2.database.helper.create_engine(args.db_user, args.db_password, args.db_name, host=args.db_host,
                                            port=args.db_port)
 
     # create PostGIS and pgRouting extensions in database:
     print "Creating PostGIS and pgRouting extension in PostgreSQL database"
-    result = engine.execute("CREATE EXTENSION postgis;")
-    for row in result:
-        print row[0]
-    result = engine.execute("CREATE EXTENSION pgrouting;")
-    for row in result:
-        print row[0]
+    engine.execute("CREATE EXTENSION IF NOT EXISTS postgis;")
+    engine.execute("CREATE EXTENSION IF NOT EXISTS pgrouting;")
+
 
     # import osm data
     print 'Importing OSM data ...'
@@ -127,8 +125,8 @@ def main():
         sys.exit(1)
 
     # create iBis database tables
-    metadata = database.helper.create_tables()
-    metadata.create_all(engine)
+    tables = ibisapi2.database.helper.create_tables()
+    tables ['metadata'].create_all(engine)
 
     # copy osm way types from osm2pgrouting table to ibis table
     # TODO
