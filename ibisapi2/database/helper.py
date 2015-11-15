@@ -26,10 +26,11 @@ def create_tables():
 
     :rtype : sqlalchemy.MetaData
     :param engine: sqlalchemy engine for databse to create table in
-    :return: table metadata
+    :return: dict of tables and sqlalchemy table metadata
     """
     metadata = sqlalchemy.MetaData()
-    sqlalchemy.Table('tracks', metadata,
+    tables = {'metadata':metadata}
+    tables['tracks'] = sqlalchemy.Table('tracks', metadata,
                      sqlalchemy.Column('id', sqlalchemy.BigInteger, primary_key=True, index=True),
                      sqlalchemy.Column('created', sqlalchemy.TIMESTAMP, nullable=False),
                      sqlalchemy.Column('uploaded', sqlalchemy.TIMESTAMP, nullable=False),
@@ -44,7 +45,7 @@ def create_tables():
                      sqlalchemy.Column('extension_geom', geoalchemy2.Geometry('POLYGON'), index=True),  # geo index?
                      sqlalchemy.Column('track', geoalchemy2.Geometry('LINESTRING'))
                      )
-    sqlalchemy.Table('track_points', metadata,
+    tables['track_points'] = sqlalchemy.Table('track_points', metadata,
                      sqlalchemy.Column('id', None, sqlalchemy.ForeignKey('tracks.id', ondelete='CASCADE'),
                                        nullable=False, index=True),
                      sqlalchemy.Column('geom', geoalchemy2.Geometry('POINT', 4326), nullable=False, index=True),
@@ -54,30 +55,30 @@ def create_tables():
                      sqlalchemy.Column('velocity', sqlalchemy.Numeric(11, 8)),
                      sqlalchemy.Column('shock', sqlalchemy.Numeric(16, 8))
                      )
-    sqlalchemy.Table('users', metadata,
+    tables['users'] = sqlalchemy.Table('users', metadata,
                      sqlalchemy.Column('name', sqlalchemy.Text, unique=True, index=True),
                      sqlalchemy.Column('password', sqlalchemy.Text),
                      sqlalchemy.Column('rights', sqlalchemy.BigInteger),
                      sqlalchemy.Column('enabled', sqlalchemy.Boolean)
                      )
-    sqlalchemy.Table('profiles', metadata,
+    tables['profiles'] = sqlalchemy.Table('profiles', metadata,
                      sqlalchemy.Column('id', sqlalchemy.BigInteger, primary_key=True, index=True),
                      sqlalchemy.Column('name', sqlalchemy.Text)
                      )
-    sqlalchemy.Table('profile_description', metadata,
+    tables['profile_description'] = sqlalchemy.Table('profile_description', metadata,
                      sqlalchemy.Column('id', None, sqlalchemy.ForeignKey('profiles.id'), unique=True),  # index?
                      sqlalchemy.Column('language', sqlalchemy.Text),
                      sqlalchemy.Column('description', sqlalchemy.Text)
                      )
-    sqlalchemy.Table('way_types', metadata,
+    tables['way_types'] = sqlalchemy.Table('way_types', metadata,
                      sqlalchemy.Column('id', sqlalchemy.Text, primary_key=True, index=True)
                      )
-    sqlalchemy.Table('way_type_description', metadata,
+    tables['way_type_description'] = sqlalchemy.Table('way_type_description', metadata,
                      sqlalchemy.Column('id', None, sqlalchemy.ForeignKey('way_types.id')),  # not unique, index?
                      sqlalchemy.Column('language', sqlalchemy.Text),
                      sqlalchemy.Column('description', sqlalchemy.Text)
                      )
-    sqlalchemy.Table('cost_static', metadata,
+    tables['cost_static'] = sqlalchemy.Table('cost_static', metadata,
                      sqlalchemy.Column('id', None, sqlalchemy.ForeignKey('way_types.id')),
                      sqlalchemy.Column('cost_forward', sqlalchemy.Numeric(16, 8)),
                      sqlalchemy.Column('cost_reverse', sqlalchemy.Numeric(16, 8)),
@@ -86,16 +87,16 @@ def create_tables():
                      # place a unique index on id, profile
                      sqlalchemy.Index('idx_id_profile', 'id', 'profile', unique=True)
                      )
-    sqlalchemy.Table('cost_dynamic', metadata,
+    tables['cost_dynamic'] = sqlalchemy.Table('cost_dynamic', metadata,
                      sqlalchemy.Column('segment_id', sqlalchemy.BigInteger, index=True),
                      sqlalchemy.Column('track_id', None, sqlalchemy.ForeignKey('tracks.id')),
                      sqlalchemy.Column('cost_forward', sqlalchemy.Numeric(16, 8)),
                      sqlalchemy.Column('cost_reverse', sqlalchemy.Numeric(16, 8))
                      )
-    sqlalchemy.Table('cost_dynamic_precalculated', metadata,
+    tables['cost_dynamic_precalculated'] = sqlalchemy.Table('cost_dynamic_precalculated', metadata,
                      sqlalchemy.Column('segment_id', sqlalchemy.BigInteger, primary_key=True, unique=True, index=True),
                      sqlalchemy.Column('cost_forward', sqlalchemy.Numeric(16, 8)),
                      sqlalchemy.Column('cost_reverse', sqlalchemy.Numeric(16, 8)),
                      sqlalchemy.Column('relevance', sqlalchemy.Numeric(16, 8))
                      )
-    return metadata
+    return tables
