@@ -1,8 +1,11 @@
-import falcon
 from wsgiref import simple_server
 
-import ibisapi2.resources as resources
-import ibisapi2.middleware as middleware
+import falcon
+
+import middleware
+import database.helper
+import resources.info
+import resources.track
 
 
 api = falcon.API(
@@ -10,9 +13,11 @@ api = falcon.API(
     middleware=[middleware.JSONTranslator()]
 )
 
+db_engine = database.helper.create_engine('postgres', '132456', 'ibis')
+db_tables = database.helper.create_tables()
 
 api.add_route('/info', resources.info.Info())
-
+api.add_route('/track/list', resources.track.List())
 
 # Useful for debugging problems in your API; works with pdb.set_trace()
 if __name__ == '__main__':
