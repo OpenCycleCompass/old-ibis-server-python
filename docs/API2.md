@@ -13,9 +13,10 @@ Retrieve track list
 
 | Name  | Type    | Description |
 |-------|---------|-------------|
-| num   | integer | Track to start with (default 0) |
+| start | integer | Track to start with (default 0) |
+| num   | integer | number of tracks (default 25, only for administrative users) |
 | raw   | boolean | Return all tracks solely with *track_id* (only authorized users) |
-| tokens | array of string | Array of user tokens. Private tracks with specified tokens are included. (optional) |
+| tracks | array of integers | Array of user tracks. The specified private tracks are included. (optional) |
 
 
 #### Example
